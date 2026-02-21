@@ -39,43 +39,43 @@ export enum ThemeSettings {
 }
 
 export enum ThemeSettingDefaults {
-	COLOR_THEME_DARK = 'Default Dark+', // Void changed this from 'Default Dark Modern'
+	COLOR_THEME_DARK = 'Kitium Dark', // Kitium default theme
 	COLOR_THEME_LIGHT = 'Default Light Modern',
 	COLOR_THEME_HC_DARK = 'Default High Contrast',
 	COLOR_THEME_HC_LIGHT = 'Default High Contrast Light',
 
-	COLOR_THEME_DARK_OLD = 'Default Dark Modern', // Void changed this from 'Default Dark+'
+	COLOR_THEME_DARK_OLD = 'Default Dark Modern',
 	COLOR_THEME_LIGHT_OLD = 'Default Light+',
 
 	FILE_ICON_THEME = 'vs-seti',
 	PRODUCT_ICON_THEME = 'Default',
 }
 
-export const COLOR_THEME_DARK_INITIAL_COLORS = { // Void changed this to match dark+
-	'activityBar.activeBorder': '#ffffff',
-	'activityBar.background': '#333333',
-	'activityBar.border': '#454545',
-	'activityBar.foreground': '#ffffff',
-	'activityBar.inactiveForeground': '#ffffff66',
-	'editorGroup.border': '#444444',
-	'editorGroupHeader.tabsBackground': '#252526',
-	'editorGroupHeader.tabsBorder': '#252526',
-	'statusBar.background': '#007ACC',
-	'statusBar.border': '#454545',
-	'statusBar.foreground': '#ffffff',
-	'statusBar.noFolderBackground': '#68217A',
-	'tab.activeBackground': '#2D2D2D',
-	'tab.activeBorder': '#ffffff',
-	'tab.activeBorderTop': '#007ACC',
-	'tab.activeForeground': '#ffffff',
-	'tab.border': '#252526',
-	'textLink.foreground': '#3794ff',
-	'titleBar.activeBackground': '#3C3C3C',
-	'titleBar.activeForeground': '#CCCCCC',
-	'titleBar.border': '#454545',
-	'titleBar.inactiveBackground': '#2C2C2C',
-	'titleBar.inactiveForeground': '#999999',
-	'welcomePage.tileBackground': '#252526'
+export const COLOR_THEME_DARK_INITIAL_COLORS = { // Kitium brand colors: deep navy + amber accent
+	'activityBar.activeBorder': '#F59E0B',
+	'activityBar.background': '#0D0F12',
+	'activityBar.border': '#1E2330',
+	'activityBar.foreground': '#E8EAED',
+	'activityBar.inactiveForeground': '#64748B',
+	'editorGroup.border': '#1E2330',
+	'editorGroupHeader.tabsBackground': '#0D0F12',
+	'editorGroupHeader.tabsBorder': '#1E2330',
+	'statusBar.background': '#1E3A8A',
+	'statusBar.border': '#1E2330',
+	'statusBar.foreground': '#E8EAED',
+	'statusBar.noFolderBackground': '#141720',
+	'tab.activeBackground': '#141720',
+	'tab.activeBorder': '#F59E0B',
+	'tab.activeBorderTop': '#1E3A8A',
+	'tab.activeForeground': '#E8EAED',
+	'tab.border': '#1E2330',
+	'textLink.foreground': '#F59E0B',
+	'titleBar.activeBackground': '#0D0F12',
+	'titleBar.activeForeground': '#E8EAED',
+	'titleBar.border': '#1E2330',
+	'titleBar.inactiveBackground': '#0D0F12',
+	'titleBar.inactiveForeground': '#64748B',
+	'welcomePage.tileBackground': '#141720'
 };
 
 export const COLOR_THEME_LIGHT_INITIAL_COLORS = {

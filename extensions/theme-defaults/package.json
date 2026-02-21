@@ -14,6 +14,12 @@
   "contributes": {
     "themes": [
       {
+        "id": "Kitium Dark",
+        "label": "Kitium Dark",
+        "uiTheme": "vs-dark",
+        "path": "./themes/kitium_dark.json"
+      },
+      {
         "id": "Default Dark+",
         "label": "%darkPlusColorThemeLabel%",
         "uiTheme": "vs-dark",
