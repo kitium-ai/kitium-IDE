@@ -16,6 +16,10 @@ import './browser/workbench.contribution.js';
 import './contrib/void/browser/void.contribution.js'; // Void added this
 //#endregion
 
+//#region --- Kitium
+import './contrib/kitium/browser/kitium.contribution.js'; // Kitium: Kit Companion + NL Terminal
+//#endregion
+
 //#region --- workbench actions
 
 import './browser/actions/textInputActions.js';

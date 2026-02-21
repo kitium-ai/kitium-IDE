@@ -1,0 +1,67 @@
+diff --git a/node_modules/@vscode/gulp-electron/src/download.js b/node_modules/@vscode/gulp-electron/src/download.js
+index 8a53942..b31b36c 100644
+--- a/node_modules/@vscode/gulp-electron/src/download.js
++++ b/node_modules/@vscode/gulp-electron/src/download.js
+@@ -1,14 +1,35 @@
+ "use strict";
+ 
+ var path = require("path");
+-const { downloadArtifact } = require("@electron/get");
++let _downloadArtifact;
++async function getDownloadArtifact() {
++  if (!_downloadArtifact) {
++    const mod = await import("@electron/get");
++    _downloadArtifact = mod.downloadArtifact;
++  }
++  return _downloadArtifact;
++}
+ const ProgressBar = require("progress");
+ var rename = require("gulp-rename");
+ var es = require("event-stream");
+ var zfs = require("gulp-vinyl-zip");
+ var filter = require("gulp-filter");
+-const { Octokit } = require("@octokit/rest");
+-const { got } = require("got");
++let _Octokit;
++async function getOctokit() {
++  if (!_Octokit) {
++    const mod = await import("@octokit/rest");
++    _Octokit = mod.Octokit;
++  }
++  return _Octokit;
++}
++let _got;
++async function getGot() {
++  if (!_got) {
++    const mod = await import("got");
++    _got = mod.got;
++  }
++  return _got;
++}
+ const sumchecker = require('sumchecker');
+ 
+ async function getDownloadUrl(
+@@ -16,6 +37,7 @@ async function getDownloadUrl(
+   { version, platform, arch, token, artifactName, artifactSuffix }
+ ) {
+   const [owner, repo] = ownerRepo.split("/");
++  const Octokit = await getOctokit();
+   const octokit = new Octokit({ auth: token });
+   const releaseVersion = version.startsWith("v") ? version : `v${version}`;
+   const tag = customTag ?? releaseVersion;
+@@ -61,6 +83,7 @@ async function getDownloadUrl(
+   const { url, headers } = requestOptions;
+   headers.authorization = `token ${token}`;
+ 
++  const got = await getGot();
+   const response = await got(url, {
+     followRedirect: false,
+     method: "HEAD",
+@@ -134,6 +157,7 @@ async function download(opts) {
+   const start = new Date();
+   bar.start = start;
+ 
++  const downloadArtifact = await getDownloadArtifact();
+   return await downloadArtifact(downloadOpts);
+ }
+ 
