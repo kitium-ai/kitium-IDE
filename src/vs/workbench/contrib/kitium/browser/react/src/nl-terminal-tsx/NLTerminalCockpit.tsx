@@ -80,6 +80,7 @@ const css = {
 		padding: '4px 8px',
 		fontSize: 13,
 		outline: 'none',
+		caretColor: 'var(--vscode-input-foreground, #cccccc)',
 	},
 	suggestBtn: {
 		background: 'var(--vscode-button-background, #0e639c)',

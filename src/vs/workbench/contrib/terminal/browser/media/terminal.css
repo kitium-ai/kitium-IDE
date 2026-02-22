@@ -16,6 +16,16 @@
 	z-index: 0;
 }
 
+/* NL Terminal cockpit: ensure text cursor (caret) is visible in the natural-language input */
+.monaco-workbench .kitium-nl-cockpit input {
+	caret-color: var(--vscode-input-foreground, #cccccc);
+}
+
+/* When focus is in the NL cockpit input, hide the xterm cursor to avoid double cursor / line under the input */
+.monaco-workbench .pane-body.integrated-terminal:has(.kitium-nl-cockpit:focus-within) .kitium-terminal-body .xterm .xterm-cursor-layer .xterm-cursor {
+	visibility: hidden !important;
+}
+
 .terminal-command-decoration.hide {
 	visibility: hidden;
 }
