@@ -51,9 +51,12 @@ import { IAccessibilityService } from '../../../../platform/accessibility/common
 import { InstanceContext, TerminalContextActionRunner } from './terminalContextMenu.js';
 import { MicrotaskDelay } from '../../../../base/common/symbols.js';
 import { IStorageService } from '../../../../platform/storage/common/storage.js';
+import { mountNLTerminalCockpit } from '../../void/browser/react/out/terminal-cockpit-tsx/index.js';
 
 export class TerminalViewPane extends ViewPane {
 	private _parentDomElement: HTMLElement | undefined;
+	private _terminalBodyEl: HTMLElement | undefined;
+	private _nlCockpitEl: HTMLElement | undefined;
 	private _terminalTabbedView?: TerminalTabbedView;
 	get terminalTabbedView(): TerminalTabbedView | undefined { return this._terminalTabbedView; }
 	private _isInitialized: boolean = false;
@@ -195,10 +198,52 @@ export class TerminalViewPane extends ViewPane {
 		if (!this._parentDomElement) {
 			this._updateForShellIntegration(container);
 		}
+
+		// ── Setup: terminal fills area, NL cockpit as bottom overlay ───────
+		// Container gets .integrated-terminal so VS Code CSS still matches.
+		// Terminal body wrapper is first (behind); NL cockpit is second (on top at bottom).
 		this._parentDomElement = container;
-		this._parentDomElement.classList.add('integrated-terminal');
-		domStylesheetsJs.createStyleSheet(this._parentDomElement);
-		this._instantiationService.createInstance(TerminalThemeIconStyle, this._parentDomElement);
+		container.style.position = 'relative';
+		container.style.overflow = 'hidden';
+		container.classList.add('integrated-terminal');
+		domStylesheetsJs.createStyleSheet(container);
+		this._instantiationService.createInstance(TerminalThemeIconStyle, container);
+
+		// Terminal body: fills space above the cockpit; tabbed view (tabs + xterm) lives here.
+		const terminalBodyEl = dom.$('div.kitium-terminal-body');
+		terminalBodyEl.style.position = 'absolute';
+		terminalBodyEl.style.top = '0';
+		terminalBodyEl.style.left = '0';
+		terminalBodyEl.style.right = '0';
+		terminalBodyEl.style.overflow = 'hidden';
+		this._terminalBodyEl = terminalBodyEl;
+		container.appendChild(terminalBodyEl);
+
+		// NL Cockpit: bottom overlay so the main area shows the original terminal with cursor.
+		const cockpitEl = dom.$('div.kitium-nl-cockpit');
+		cockpitEl.style.position = 'absolute';
+		cockpitEl.style.bottom = '0';
+		cockpitEl.style.left = '0';
+		cockpitEl.style.right = '0';
+		cockpitEl.style.zIndex = '10';
+		this._nlCockpitEl = cockpitEl;
+		container.appendChild(cockpitEl);
+
+		this._instantiationService.invokeFunction((accessor: ServicesAccessor) => {
+			const result = mountNLTerminalCockpit(cockpitEl, accessor);
+			if (result) {
+				this._register(toDisposable(result.dispose));
+			}
+		});
+
+		// Re-layout when cockpit height changes (after React renders or collapses).
+		const cockpitResizeObs = new ResizeObserver(() => {
+			if (this._parentDomElement) {
+				this.layoutBody(this._parentDomElement.offsetHeight, this._parentDomElement.offsetWidth);
+			}
+		});
+		cockpitResizeObs.observe(cockpitEl);
+		this._register(toDisposable(() => cockpitResizeObs.disconnect()));
 
 		if (!this.shouldShowWelcome()) {
 			this._createTabsView();
@@ -234,20 +279,25 @@ export class TerminalViewPane extends ViewPane {
 			this._terminalGroupService.updateVisibility();
 		}));
 		this._register(this._terminalService.onDidChangeConnectionState(() => this._initializeTerminal(true)));
-		this.layoutBody(this._parentDomElement.offsetHeight, this._parentDomElement.offsetWidth);
+		this.layoutBody(container.offsetHeight, container.offsetWidth);
 	}
 
 	private _createTabsView(): void {
-		if (!this._parentDomElement) {
+		if (!this._terminalBodyEl) {
 			return;
 		}
-		this._terminalTabbedView = this._register(this.instantiationService.createInstance(TerminalTabbedView, this._parentDomElement));
+		this._terminalTabbedView = this._register(this.instantiationService.createInstance(TerminalTabbedView, this._terminalBodyEl));
 	}
 
 	// eslint-disable-next-line @typescript-eslint/naming-convention
 	protected override layoutBody(height: number, width: number): void {
 		super.layoutBody(height, width);
-		this._terminalTabbedView?.layout(width, height);
+		const cockpitHeight = this._nlCockpitEl?.offsetHeight ?? 0;
+		const terminalHeight = Math.max(0, height - cockpitHeight);
+		if (this._terminalBodyEl) {
+			this._terminalBodyEl.style.height = `${terminalHeight}px`;
+		}
+		this._terminalTabbedView?.layout(width, terminalHeight);
 	}
 
 	override createActionViewItem(action: Action, options: IBaseActionViewItemOptions): IActionViewItem | undefined {

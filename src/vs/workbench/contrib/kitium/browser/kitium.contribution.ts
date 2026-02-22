@@ -3,5 +3,4 @@
 // Kit Companion: floating AI avatar overlay
 import './kitiumCompanionContribution.js';
 
-// NL Terminal: natural-language terminal panel
-import './kitiumNLTerminalPane.js';
+// NL Terminal panel removed — NL cockpit is now embedded directly in the integrated terminal
